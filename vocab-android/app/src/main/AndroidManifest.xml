@@ -3,6 +3,7 @@
 
     <!-- 无 TTS 引擎的设备/模拟器：在线发音兜底 -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     <!-- 卸载重装后读取媒体集合里的「乐词自动备份.json」实现进度自动继承 -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />

@@ -1,11 +1,13 @@
 {
-  "version": "1.9.5",
+  "version": "1.10.0",
   "releasedAt": "2026-08-31",
   "url": "https://github.com/beijiuting/leci-vocab",
   "apkUrl": "https://github.com/beijiuting/leci-vocab/releases/latest",
+  "mirrorApkUrl": "https://cdn.jsdelivr.net/gh/beijiuting/leci-vocab@v1.10.0/乐词背单词-v1.10.0.apk",
   "notes": [
     "在我的页面显示当前版本号",
     "优化更新说明显示，正确处理 GitHub Markdown",
-    "继续使用 GitHub Release 自动更新链路"
+    "应用内显示下载进度，下载完成后调用系统安装器更新",
+    "GitHub、jsDelivr 多源下载，降低国内网络访问门槛"
   ]
 }

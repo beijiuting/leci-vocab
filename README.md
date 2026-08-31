@@ -15,7 +15,7 @@
 
 - `vocab-app/`：零依赖原生 JavaScript 网页版，可直接打开 `index.html`
 - `vocab-android/`：Java + WebView Android 工程
-- `乐词背单词-v1.9.5.apk`：当前 Android 发布包
+- `乐词背单词-v1.10.0.apk`：当前 Android 发布包
 - `releases/`：上一稳定版 APK 回滚包；完整历史版本见 GitHub Releases 和 tags
 - `AGENTS.md`：完整技术交付文档与构建验证流程
 

@@ -2,6 +2,7 @@ package com.leci.vocab;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.DownloadManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.ContentUris;
@@ -14,6 +15,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.view.Window;
@@ -39,6 +41,7 @@ import java.util.Locale;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import org.json.JSONObject;
 
 public class MainActivity extends Activity {
 
@@ -52,6 +55,7 @@ public class MainActivity extends Activity {
     private volatile boolean ttsReady = false;
     private int ttsCounter = 0;
     private boolean ttsPendingUk = false;
+    private DownloadManager downloadManager;
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
@@ -125,6 +129,8 @@ public class MainActivity extends Activity {
 
         webView.addJavascriptInterface(new TtsBridge(), "NativeTTS");
         webView.addJavascriptInterface(new BackupBridge(), "NativeBackup");
+        webView.addJavascriptInterface(new UpdateBridge(), "NativeUpdate");
+        downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
         initTts();
         requestLegacyRead();   // 卸载重装后读下载目录的自动备份（Android 12 及以下）
 
@@ -218,6 +224,61 @@ public class MainActivity extends Activity {
         @JavascriptInterface
         public void stop() {
             if (ttsReady) tts.stop();
+        }
+    }
+
+    /* ---- 应用内更新桥：下载显示由网页控制，文件下载由系统 DownloadManager 执行 ---- */
+    private class UpdateBridge {
+        @JavascriptInterface
+        public long download(String url, String fileName) {
+            if (downloadManager == null || url == null || url.length() == 0) return -1;
+            try {
+                String safeName = (fileName == null || fileName.length() == 0)
+                        ? "leci-vocab-update.apk" : fileName.replaceAll("[\\\\/:*?\"<>|]", "_");
+                DownloadManager.Request req = new DownloadManager.Request(Uri.parse(url));
+                req.setTitle("乐词背单词更新");
+                req.setDescription("正在下载新版本");
+                req.setMimeType("application/vnd.android.package-archive");
+                req.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                req.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, safeName);
+                return downloadManager.enqueue(req);
+            } catch (Throwable ignored) { return -1; }
+        }
+
+        @JavascriptInterface
+        public String status(long id) {
+            if (downloadManager == null || id < 0) return "{\"state\":\"error\",\"progress\":0}";
+            Cursor c = null;
+            try {
+                c = downloadManager.query(new DownloadManager.Query().setFilterById(id));
+                if (c == null || !c.moveToFirst()) return "{\"state\":\"missing\",\"progress\":0}";
+                int status = c.getInt(c.getColumnIndexOrThrow(DownloadManager.COLUMN_STATUS));
+                long soFar = c.getLong(c.getColumnIndexOrThrow(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR));
+                long total = c.getLong(c.getColumnIndexOrThrow(DownloadManager.COLUMN_TOTAL_SIZE_BYTES));
+                int progress = total > 0 ? (int) Math.max(0, Math.min(100, soFar * 100 / total)) : 0;
+                String state = "downloading";
+                if (status == DownloadManager.STATUS_SUCCESSFUL) state = "success";
+                else if (status == DownloadManager.STATUS_FAILED) state = "failed";
+                JSONObject out = new JSONObject();
+                out.put("state", state); out.put("progress", progress);
+                if (state.equals("failed")) out.put("reason", c.getInt(c.getColumnIndexOrThrow(DownloadManager.COLUMN_REASON)));
+                return out.toString();
+            } catch (Throwable ignored) { return "{\"state\":\"error\",\"progress\":0}"; }
+            finally { if (c != null) c.close(); }
+        }
+
+        @JavascriptInterface
+        public boolean install(long id) {
+            if (downloadManager == null || id < 0) return false;
+            try {
+                Uri uri = downloadManager.getUriForDownloadedFile(id);
+                if (uri == null) return false;
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                intent.setDataAndType(uri, "application/vnd.android.package-archive");
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                return true;
+            } catch (Throwable ignored) { return false; }
         }
     }
 

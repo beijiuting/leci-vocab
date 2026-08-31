@@ -5,7 +5,7 @@
   var S = window.SRS, DB = window.DB;
 
   var App = {
-    version: "1.9.5",
+    version: "1.10.0",
     updateManifestUrls: ["https://api.github.com/repos/beijiuting/leci-vocab/releases/latest", "https://raw.githubusercontent.com/beijiuting/leci-vocab/main/version.json", "https://cdn.jsdelivr.net/gh/beijiuting/leci-vocab@main/version.json"],
     settings: { currentLib: "cet6", dailyNew: 20, voice: "us", autoSpeak: 1, darkMode: "0", autoFavWrong: 1, learnOrder: "shuffle", freqRange: "all", favBooks: null, curFavBook: "default" },
     libCache: null,      // {id: {id,name,short,color,words,custom}}
@@ -65,7 +65,11 @@
               candidate = { version: candidate.tag_name, notes: [candidate.body || "GitHub 已发布新版本"],
                 apkUrl: assets.length ? assets[0].browser_download_url : candidate.html_url, url: candidate.html_url };
             }
-            if (candidate && candidate.version && (!info || this.compareVersions(candidate.version, info.version) > 0)) info = candidate;
+            if (candidate && candidate.version) {
+              if (!candidate.mirrorApkUrl) candidate.mirrorApkUrl = "https://cdn.jsdelivr.net/gh/beijiuting/leci-vocab@v" +
+                String(candidate.version).replace(/^v/, "") + "/乐词背单词-v" + String(candidate.version).replace(/^v/, "") + ".apk";
+              if (!info || this.compareVersions(candidate.version, info.version) > 0) info = candidate;
+            }
           } catch (ignore) {}
         }
         if (!info || !info.version) { if (manual) this.toast("暂时无法连接更新服务器"); return; }
@@ -74,12 +78,12 @@
         if (sessionStorage.getItem(key)) return;
         sessionStorage.setItem(key, "1");
         var notes = (info.notes || []).map(function (x) { return "• " + String(x).replace(/<[^>]+>/g, "").replace(/\*\*/g, ""); }).join("\n");
-        var url = info.apkUrl || info.url || "https://github.com/beijiuting/leci-vocab/releases";
+        var url = info.mirrorApkUrl || info.apkUrl || info.url || "https://github.com/beijiuting/leci-vocab/releases";
         var self = this;
         this.confirm("发现新版本 " + esc(info.version),
           notes || "有新的功能和修复", null,
           [{ text: "稍后再说", cls: "btn-plain", fn: null }, { text: "立即更新", cls: "btn-primary", fn: function () {
-            if (/Android/i.test(navigator.userAgent) && url) location.href = url;
+            if (/Android/i.test(navigator.userAgent) && url) self.startUpdateDownload(info);
             else window.location.reload();
           }}]);
       } catch (e) { if (manual) this.toast("检查更新失败，请稍后重试"); }
@@ -92,6 +96,49 @@
         if (x !== y) return x > y ? 1 : -1;
       }
       return 0;
+    },
+
+    /* Android 壳内下载 APK 并显示进度；网页端保留普通下载入口 */
+    startUpdateDownload(info) {
+      var self = this;
+      var native = window.NativeUpdate;
+      if (!native || !native.download || !native.status) {
+        location.href = info.apkUrl || info.url || "https://github.com/beijiuting/leci-vocab/releases";
+        return;
+      }
+      var ver = String(info.version).replace(/^v/, "");
+      var urls = [info.mirrorApkUrl, info.apkUrl, "https://github.com/beijiuting/leci-vocab/releases/download/v" + ver + "/乐词背单词-v" + ver + ".apk"]
+        .filter(function (x, i, a) { return x && a.indexOf(x) === i; });
+      var modal = document.getElementById("modal"), mask = document.getElementById("mask");
+      modal.innerHTML = "<h3>正在更新到 v" + esc(ver) + "</h3>" +
+        '<div class="sub" id="upd-state">正在连接下载服务器…</div>' +
+        '<div class="upd-progress"><i id="upd-bar" style="width:0%"></i></div>' +
+        '<div class="upd-pct" id="upd-pct">0%</div>';
+      mask.classList.add("on");
+      var bar = document.getElementById("upd-bar"), pct = document.getElementById("upd-pct"), state = document.getElementById("upd-state");
+      var index = 0, id = -1, timer = null;
+      function finish(msg, close) { if (timer) clearInterval(timer); state.textContent = msg; if (close) mask.classList.remove("on"); }
+      function poll() {
+        var raw = native.status(id), s;
+        try { s = JSON.parse(raw); } catch (e) { s = { state: "error", progress: 0 }; }
+        var p = Math.max(0, Math.min(100, Number(s.progress) || 0));
+        bar.style.width = p + "%"; pct.textContent = p + "%";
+        if (s.state === "success") {
+          finish("下载完成，正在打开系统安装器…", false);
+          setTimeout(function () {
+            if (!native.install(id)) { state.textContent = "无法自动打开安装器，请到下载目录手动安装"; }
+          }, 250);
+        } else if (s.state === "failed" || s.state === "error" || s.state === "missing") {
+          if (index + 1 < urls.length) { index++; state.textContent = "正在切换备用下载源…"; begin(); }
+          else finish("下载失败，请稍后重试或检查网络", false);
+        }
+      }
+      function begin() {
+        try { id = Number(native.download(urls[index], "乐词背单词-v" + ver + ".apk")); } catch (e) { id = -1; }
+        if (id < 0) { if (index + 1 < urls.length) { index++; begin(); } else finish("下载失败，请稍后重试", false); return; }
+        if (timer) clearInterval(timer); timer = setInterval(poll, 500); poll();
+      }
+      begin();
     },
 
     /* 单词标题自适应缩字号：按容器宽度与字符数预算，超宽再实测收缩；永不换行（配合 .ww nowrap） */
