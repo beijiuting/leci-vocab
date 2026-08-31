@@ -5,6 +5,8 @@
   var S = window.SRS, DB = window.DB;
 
   var App = {
+    version: "1.8.0",
+    updateManifestUrl: "https://raw.githubusercontent.com/beijiuting/leci-vocab/main/version.json",
     settings: { currentLib: "cet6", dailyNew: 20, voice: "us", autoSpeak: 1, darkMode: "0", autoFavWrong: 1, learnOrder: "shuffle", freqRange: "all", favBooks: null, curFavBook: "default" },
     libCache: null,      // {id: {id,name,short,color,words,custom}}
     voiceList: [],
@@ -47,6 +49,38 @@
         });
       } catch (e) { /* 忽略 */ }
       await this.refreshAll();
+      setTimeout(function () { App.checkForUpdates(); }, 1800);
+    },
+
+    /* 从 GitHub 公共版本清单检查更新；网页可刷新，Android 交给系统安装器确认 */
+    async checkForUpdates() {
+      try {
+        var res = await fetch(this.updateManifestUrl + "?t=" + Date.now(), { cache: "no-store" });
+        if (!res.ok) return;
+        var info = await res.json();
+        if (!info || !info.version || this.compareVersions(info.version, this.version) <= 0) return;
+        var key = "leci-update-seen-" + info.version;
+        if (sessionStorage.getItem(key)) return;
+        sessionStorage.setItem(key, "1");
+        var notes = (info.notes || []).map(function (x) { return "• " + x; }).join("<br>");
+        var url = info.apkUrl || info.url || "https://github.com/beijiuting/leci-vocab/releases";
+        var self = this;
+        this.confirm("发现新版本 " + esc(info.version),
+          '<div style="line-height:1.7">' + (notes || "有新的功能和修复") + "</div>", null,
+          [{ text: "稍后再说", cls: "btn-plain", fn: null }, { text: "立即更新", cls: "btn-primary", fn: function () {
+            if (/Android/i.test(navigator.userAgent) && url) window.open(url, "_blank");
+            else window.location.reload();
+          }}]);
+      } catch (e) { /* 网络不可用时保持离线使用 */ }
+    },
+    compareVersions(a, b) {
+      var pa = String(a).replace(/^v/, "").split(".").map(Number);
+      var pb = String(b).replace(/^v/, "").split(".").map(Number);
+      for (var i = 0; i < 3; i++) {
+        var x = pa[i] || 0, y = pb[i] || 0;
+        if (x !== y) return x > y ? 1 : -1;
+      }
+      return 0;
     },
 
     /* 单词标题自适应缩字号：按容器宽度与字符数预算，超宽再实测收缩；永不换行（配合 .ww nowrap） */
