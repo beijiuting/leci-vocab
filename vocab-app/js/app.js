@@ -5,7 +5,7 @@
   var S = window.SRS, DB = window.DB;
 
   var App = {
-    version: "1.9.0",
+    version: "1.9.1",
     updateManifestUrls: ["https://raw.githubusercontent.com/beijiuting/leci-vocab/main/version.json", "https://cdn.jsdelivr.net/gh/beijiuting/leci-vocab@main/version.json"],
     settings: { currentLib: "cet6", dailyNew: 20, voice: "us", autoSpeak: 1, darkMode: "0", autoFavWrong: 1, learnOrder: "shuffle", freqRange: "all", favBooks: null, curFavBook: "default" },
     libCache: null,      // {id: {id,name,short,color,words,custom}}
@@ -56,8 +56,12 @@
     async checkForUpdates(manual) {
       try {
         var info = null;
-        for (var i = 0; i < this.updateManifestUrls.length && !info; i++) {
-          try { var res = await fetch(this.updateManifestUrls[i] + "?t=" + Date.now(), { cache: "no-store" }); if (res.ok) info = await res.json(); } catch (ignore) {}
+        for (var i = 0; i < this.updateManifestUrls.length; i++) {
+          try {
+            var res = await fetch(this.updateManifestUrls[i] + "?t=" + Date.now(), { cache: "no-store" });
+            var candidate = res.ok ? await res.json() : null;
+            if (candidate && candidate.version && (!info || this.compareVersions(candidate.version, info.version) > 0)) info = candidate;
+          } catch (ignore) {}
         }
         if (!info || !info.version) { if (manual) this.toast("暂时无法连接更新服务器"); return; }
         if (this.compareVersions(info.version, this.version) <= 0) { if (manual) this.toast("当前已是最新版本"); return; }
