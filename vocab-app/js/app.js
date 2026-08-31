@@ -5,7 +5,7 @@
   var S = window.SRS, DB = window.DB;
 
   var App = {
-    version: "1.9.4",
+    version: "1.9.5",
     updateManifestUrls: ["https://api.github.com/repos/beijiuting/leci-vocab/releases/latest", "https://raw.githubusercontent.com/beijiuting/leci-vocab/main/version.json", "https://cdn.jsdelivr.net/gh/beijiuting/leci-vocab@main/version.json"],
     settings: { currentLib: "cet6", dailyNew: 20, voice: "us", autoSpeak: 1, darkMode: "0", autoFavWrong: 1, learnOrder: "shuffle", freqRange: "all", favBooks: null, curFavBook: "default" },
     libCache: null,      // {id: {id,name,short,color,words,custom}}
@@ -1400,6 +1400,8 @@
         });
     },
     async renderMe() {
+      var ver = document.getElementById("app-version");
+      if (ver) ver.textContent = "当前版本 v" + this.version;
       document.getElementById("set-daily").value = this.settings.dailyNew;
       document.getElementById("set-daily-v").textContent = this.settings.dailyNew;
       syncSeg("set-voice", this.settings.voice);
