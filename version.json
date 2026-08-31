@@ -1,11 +1,11 @@
 {
-  "version": "1.9.3",
+  "version": "1.9.4",
   "releasedAt": "2026-08-31",
   "url": "https://github.com/beijiuting/leci-vocab",
   "apkUrl": "https://github.com/beijiuting/leci-vocab/releases/latest",
   "notes": [
-    "验证 GitHub Release 自动更新链路",
-    "优化更新提示和发布资产管理",
+    "优化更新说明显示，正确处理 GitHub Markdown",
+    "验证自动更新下载与覆盖安装链路",
     "保留历史版本在 Releases，源码树只保留当前版本"
   ]
 }

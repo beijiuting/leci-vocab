@@ -5,7 +5,7 @@
   var S = window.SRS, DB = window.DB;
 
   var App = {
-    version: "1.9.3",
+    version: "1.9.4",
     updateManifestUrls: ["https://api.github.com/repos/beijiuting/leci-vocab/releases/latest", "https://raw.githubusercontent.com/beijiuting/leci-vocab/main/version.json", "https://cdn.jsdelivr.net/gh/beijiuting/leci-vocab@main/version.json"],
     settings: { currentLib: "cet6", dailyNew: 20, voice: "us", autoSpeak: 1, darkMode: "0", autoFavWrong: 1, learnOrder: "shuffle", freqRange: "all", favBooks: null, curFavBook: "default" },
     libCache: null,      // {id: {id,name,short,color,words,custom}}
@@ -73,11 +73,11 @@
         var key = "leci-update-seen-" + info.version;
         if (sessionStorage.getItem(key)) return;
         sessionStorage.setItem(key, "1");
-        var notes = (info.notes || []).map(function (x) { return "• " + x; }).join("<br>");
+        var notes = (info.notes || []).map(function (x) { return "• " + String(x).replace(/<[^>]+>/g, "").replace(/\*\*/g, ""); }).join("\n");
         var url = info.apkUrl || info.url || "https://github.com/beijiuting/leci-vocab/releases";
         var self = this;
         this.confirm("发现新版本 " + esc(info.version),
-          '<div style="line-height:1.7">' + (notes || "有新的功能和修复") + "</div>", null,
+          notes || "有新的功能和修复", null,
           [{ text: "稍后再说", cls: "btn-plain", fn: null }, { text: "立即更新", cls: "btn-primary", fn: function () {
             if (/Android/i.test(navigator.userAgent) && url) location.href = url;
             else window.location.reload();
