@@ -2,7 +2,7 @@
    策略：页面导航 network-first（保证拿到最新页面）；
    静态资源 stale-while-revalidate（先回缓存，后台更新，下次即为新版本）；
    发布新版本时 bump CACHE 名可强制全量刷新。 */
-var CACHE = "leci-v21";
+var CACHE = "leci-v22";
 var PRECACHE = [
   "./", "./index.html", "./manifest.json",
   "./css/style.css",

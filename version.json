@@ -1,11 +1,11 @@
 {
-  "version": "1.8.1",
+  "version": "1.8.2",
   "releasedAt": "2026-08-31",
   "url": "https://github.com/beijiuting/leci-vocab",
-  "apkUrl": "https://github.com/beijiuting/leci-vocab/raw/refs/tags/v1.8.1/乐词背单词-v1.8.1.apk",
+  "apkUrl": "https://github.com/beijiuting/leci-vocab/raw/refs/tags/v1.8.2/乐词背单词-v1.8.2.apk",
   "notes": [
-    "修复 Android 导入自定义词库无法打开文件选择器",
-    "新增 GitHub 版本检查与更新提示",
-    "网页/PWA 可刷新获取新代码，Android 提供 APK 下载入口"
+    "改进 Android 网络环境下的版本检查，增加备用 CDN 地址",
+    "新增设置页手动检查更新按钮",
+    "修复 Android 打开新 APK 链接不稳定的问题"
   ]
 }

@@ -5,8 +5,8 @@
   var S = window.SRS, DB = window.DB;
 
   var App = {
-    version: "1.8.1",
-    updateManifestUrl: "https://raw.githubusercontent.com/beijiuting/leci-vocab/main/version.json",
+    version: "1.8.2",
+    updateManifestUrls: ["https://raw.githubusercontent.com/beijiuting/leci-vocab/main/version.json", "https://cdn.jsdelivr.net/gh/beijiuting/leci-vocab@main/version.json"],
     settings: { currentLib: "cet6", dailyNew: 20, voice: "us", autoSpeak: 1, darkMode: "0", autoFavWrong: 1, learnOrder: "shuffle", freqRange: "all", favBooks: null, curFavBook: "default" },
     libCache: null,      // {id: {id,name,short,color,words,custom}}
     voiceList: [],
@@ -53,12 +53,14 @@
     },
 
     /* 从 GitHub 公共版本清单检查更新；网页可刷新，Android 交给系统安装器确认 */
-    async checkForUpdates() {
+    async checkForUpdates(manual) {
       try {
-        var res = await fetch(this.updateManifestUrl + "?t=" + Date.now(), { cache: "no-store" });
-        if (!res.ok) return;
-        var info = await res.json();
-        if (!info || !info.version || this.compareVersions(info.version, this.version) <= 0) return;
+        var info = null;
+        for (var i = 0; i < this.updateManifestUrls.length && !info; i++) {
+          try { var res = await fetch(this.updateManifestUrls[i] + "?t=" + Date.now(), { cache: "no-store" }); if (res.ok) info = await res.json(); } catch (ignore) {}
+        }
+        if (!info || !info.version) { if (manual) this.toast("暂时无法连接更新服务器"); return; }
+        if (this.compareVersions(info.version, this.version) <= 0) { if (manual) this.toast("当前已是最新版本"); return; }
         var key = "leci-update-seen-" + info.version;
         if (sessionStorage.getItem(key)) return;
         sessionStorage.setItem(key, "1");
@@ -68,10 +70,10 @@
         this.confirm("发现新版本 " + esc(info.version),
           '<div style="line-height:1.7">' + (notes || "有新的功能和修复") + "</div>", null,
           [{ text: "稍后再说", cls: "btn-plain", fn: null }, { text: "立即更新", cls: "btn-primary", fn: function () {
-            if (/Android/i.test(navigator.userAgent) && url) window.open(url, "_blank");
+            if (/Android/i.test(navigator.userAgent) && url) location.href = url;
             else window.location.reload();
           }}]);
-      } catch (e) { /* 网络不可用时保持离线使用 */ }
+      } catch (e) { if (manual) this.toast("检查更新失败，请稍后重试"); }
     },
     compareVersions(a, b) {
       var pa = String(a).replace(/^v/, "").split(".").map(Number);
@@ -1305,6 +1307,8 @@
           self.refreshAll();
         });
       };
+      var updateBtn = document.getElementById("btn-check-update");
+      if (updateBtn) updateBtn.onclick = function () { self.checkForUpdates(true); };
     },
     /* 导入备份：安卓壳读剪贴板，网页可粘贴/选文件，统一校验后覆盖恢复 */
     openImportDialog() {
