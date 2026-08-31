@@ -15,7 +15,8 @@
 
 - `vocab-app/`：零依赖原生 JavaScript 网页版，可直接打开 `index.html`
 - `vocab-android/`：Java + WebView Android 工程
-- `乐词背单词-v*.apk`：历史 Android 发布包
+- `乐词背单词-v1.9.5.apk`：当前 Android 发布包
+- `releases/`：上一稳定版 APK 回滚包；完整历史版本见 GitHub Releases 和 tags
 - `AGENTS.md`：完整技术交付文档与构建验证流程
 
 ## 快速运行
@@ -41,7 +42,7 @@ gradle assembleRelease
 
 ## 开源协作
 
-欢迎提交 Issue、改进词库处理脚本或提交 Pull Request。请先阅读 `CONTRIBUTING.md`。版本变化记录在 `CHANGELOG.md`，发布版本使用 Git tag，例如 `v1.7.0`。
+欢迎提交 Issue、改进词库处理脚本或提交 Pull Request。请先阅读 `CONTRIBUTING.md`。版本变化记录在 `CHANGELOG.md`，发布版本使用 Git tag，例如 `v1.9.5`。仓库会保留当前版本和至少一个上一稳定版，方便回滚；更早版本可在 GitHub Releases 和 tags 中下载。
 
 ## 许可与词库来源
 
