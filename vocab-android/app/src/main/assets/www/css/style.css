@@ -743,6 +743,9 @@ html.dark .sent .en mark { background: rgba(240, 154, 62, .35); color: var(--tex
   transition: transform .25s ease; text-align: left;
 }
 #qsheet.on { transform: translateX(-50%) translateY(0); }
+.upd-progress { height: 10px; background: var(--track); border-radius: 6px; overflow: hidden; margin: 18px 0 8px; }
+.upd-progress i { display:block; height:100%; background: var(--primary-grad); border-radius:6px; transition: width .2s ease; }
+.upd-pct { text-align:center; color:var(--text-2); font-size:13px; }
 .qc-head { display: flex; align-items: center; gap: 8px; }
 .qc-word { font-size: 26px; font-weight: 800; color: #F0863E; }
 html.dark .qc-word { color: #F7A65C; }
