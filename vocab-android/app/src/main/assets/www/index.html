@@ -95,7 +95,10 @@
         <b style="color:var(--text);font-size:14px">点击选择文件导入</b>
         <div style="font-size:12px;margin-top:6px;line-height:1.7">支持 TXT / CSV / JSON<br>一行一词：<code>单词,词性,释义</code>（详见「词库导入模板」文件夹）</div>
       </div>
-      <input type="file" id="import-file" accept=".txt,.csv,.json,.tsv" style="display:none">
+        <input type="file" id="import-file" accept=".txt,.csv,.json,.tsv" style="display:none">
+        <div class="h2" style="margin-top:22px">GitHub 社区词库</div>
+        <div class="sub" style="margin-bottom:10px">从项目仓库下载公开词库，下载后保存在本地</div>
+        <div id="remote-lib-list" class="remote-lib-list"><div class="sub">正在读取词库目录…</div></div>
     </section>
 
     <!-- 仪表盘 -->

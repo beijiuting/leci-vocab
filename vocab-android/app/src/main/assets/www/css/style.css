@@ -693,6 +693,10 @@ html.dark .sent .en mark { background: rgba(240, 154, 62, .35); color: var(--tex
 .sch-input { width: 100%; box-sizing: border-box; border: 1.5px solid var(--line); border-radius: 12px;
   padding: 12px 14px; font-size: 16px; color: var(--text); background: var(--ghost-bg); margin: 0; }
 .sch-input:focus { outline: none; border-color: var(--primary); }
+.remote-lib-row { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 0; border-bottom:1px solid var(--line); }
+.remote-lib-row:last-child { border-bottom:0; }
+.remote-lib-row b, .remote-lib-row span { display:block; }
+.remote-lib-row span { color:var(--text-3); font-size:12px; margin-top:3px; }
 
 /* 词组搭配 / 派生 / 词根 Tab */
 .det-tabs {

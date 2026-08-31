@@ -5,7 +5,7 @@
   var S = window.SRS, DB = window.DB;
 
   var App = {
-    version: "1.8.2",
+    version: "1.9.0",
     updateManifestUrls: ["https://raw.githubusercontent.com/beijiuting/leci-vocab/main/version.json", "https://cdn.jsdelivr.net/gh/beijiuting/leci-vocab@main/version.json"],
     settings: { currentLib: "cet6", dailyNew: 20, voice: "us", autoSpeak: 1, darkMode: "0", autoFavWrong: 1, learnOrder: "shuffle", freqRange: "all", favBooks: null, curFavBook: "default" },
     libCache: null,      // {id: {id,name,short,color,words,custom}}
@@ -706,6 +706,39 @@
       list.querySelectorAll(".lib-item").forEach(function (item) {
         item.onclick = function () { self.openWordlist(item.getAttribute("data-id")); };
       });
+      this.renderRemoteLibs();
+    },
+    async renderRemoteLibs() {
+      var box = document.getElementById("remote-lib-list");
+      if (!box) return;
+      try {
+        var r = await fetch("https://raw.githubusercontent.com/beijiuting/leci-vocab/main/vocab-libs/catalog.json?t=" + Date.now(), { cache: "no-store" });
+        if (!r.ok) throw new Error("目录读取失败");
+        var cat = await r.json(), self = this;
+        box.innerHTML = (cat.libraries || []).map(function (x) {
+          return '<div class="remote-lib-row"><div><b>' + esc(x.name) + '</b><span>' + esc(x.license || "公开许可") + '</span></div><button class="btn btn-ghost" data-remote="' + esc(x.id) + '">下载</button></div>';
+        }).join("") || '<div class="sub">暂无远程词库</div>';
+        box.querySelectorAll("[data-remote]").forEach(function (btn) {
+          btn.onclick = function () { self.downloadRemoteLib((cat.libraries || []).find(function (x) { return x.id === btn.getAttribute("data-remote"); }), btn); };
+        });
+      } catch (e) { box.innerHTML = '<div class="sub">暂时无法读取 GitHub 词库目录，请稍后重试</div>'; }
+    },
+    async downloadRemoteLib(item, btn) {
+      if (!item) return;
+      btn.disabled = true; btn.textContent = "下载中";
+      try {
+        var url = "https://raw.githubusercontent.com/beijiuting/leci-vocab/main/vocab-libs/" + encodeURIComponent(item.file) + "?t=" + Date.now();
+        var r = await fetch(url, { cache: "no-store" });
+        if (!r.ok) throw new Error("下载失败");
+        var words = await r.json();
+        if (!Array.isArray(words) || !words.length) throw new Error("词库为空");
+        var id = "remote_" + item.id;
+        await DB.put("libs", { id: id, name: item.name, short: item.short || "远程", color: "#8E6BF1", words: words, remote: true });
+        await this.buildLibCache();
+        this.toast("已下载「" + item.name + "」");
+        this.renderLibs();
+      } catch (e) { this.alert("下载失败", e.message || "无法读取远程词库"); }
+      btn.disabled = false; btn.textContent = "下载";
     },
     async renderLibCount(id) {
       var list = await DB.libProg(id);

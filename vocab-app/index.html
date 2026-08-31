@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="乐词">
 <title>乐词 · 免费背单词</title>
-<link rel="stylesheet" href="css/style.css?v=35">
+<link rel="stylesheet" href="css/style.css?v=36">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%234A7DF7'/><text x='50' y='68' font-size='52' text-anchor='middle' fill='white' font-family='serif' font-weight='bold'>词</text></svg>">
 </head>
 <body>
@@ -95,7 +95,10 @@
         <b style="color:var(--text);font-size:14px">点击选择文件导入</b>
         <div style="font-size:12px;margin-top:6px;line-height:1.7">支持 TXT / CSV / JSON<br>一行一词：<code>单词,词性,释义</code>（详见「词库导入模板」文件夹）</div>
       </div>
-      <input type="file" id="import-file" accept=".txt,.csv,.json,.tsv" style="display:none">
+        <input type="file" id="import-file" accept=".txt,.csv,.json,.tsv" style="display:none">
+        <div class="h2" style="margin-top:22px">GitHub 社区词库</div>
+        <div class="sub" style="margin-bottom:10px">从项目仓库下载公开词库，下载后保存在本地</div>
+        <div id="remote-lib-list" class="remote-lib-list"><div class="sub">正在读取词库目录…</div></div>
     </section>
 
     <!-- 仪表盘 -->
@@ -312,13 +315,13 @@
   <div id="toast"></div>
 </div>
 
-<script src="data/cet4.js?v=35"></script>
-<script src="data/cet6.js?v=35"></script>
-<script src="data/kaoyan.js?v=35"></script>
-<script src="js/db.js?v=35"></script>
-<script src="js/srs.js?v=35"></script>
-<script src="js/study.js?v=35"></script>
-<script src="js/test.js?v=35"></script>
-<script src="js/app.js?v=35"></script>
+<script src="data/cet4.js?v=36"></script>
+<script src="data/cet6.js?v=36"></script>
+<script src="data/kaoyan.js?v=36"></script>
+<script src="js/db.js?v=36"></script>
+<script src="js/srs.js?v=36"></script>
+<script src="js/study.js?v=36"></script>
+<script src="js/test.js?v=36"></script>
+<script src="js/app.js?v=36"></script>
 </body>
 </html>

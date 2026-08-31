@@ -1,0 +1,11 @@
+{
+  "schema": 1,
+  "updatedAt": "2026-08-31",
+  "libraries": [
+    {"id":"middle-school-starter","name":"中考英语 starter","short":"中考","file":"middle-school-starter.json","license":"CC0 / 自编整理"},
+    {"id":"gaokao-starter","name":"高考英语 starter","short":"高考","file":"gaokao-starter.json","license":"CC0 / 自编整理"},
+    {"id":"ielts-starter","name":"雅思英语 starter","short":"雅思","file":"ielts-starter.json","license":"CC0 / 自编整理"},
+    {"id":"toefl-starter","name":"托福英语 starter","short":"托福","file":"toefl-starter.json","license":"CC0 / 自编整理"},
+    {"id":"gre-starter","name":"GRE 英语 starter","short":"GRE","file":"gre-starter.json","license":"CC0 / 自编整理"}
+  ]
+}
