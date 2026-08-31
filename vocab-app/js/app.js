@@ -5,8 +5,8 @@
   var S = window.SRS, DB = window.DB;
 
   var App = {
-    version: "1.10.0",
-    updateManifestUrls: ["https://api.github.com/repos/beijiuting/leci-vocab/releases/latest", "https://raw.githubusercontent.com/beijiuting/leci-vocab/main/version.json", "https://cdn.jsdelivr.net/gh/beijiuting/leci-vocab@main/version.json"],
+    version: "1.10.1",
+    updateManifestUrls: ["https://cdn.jsdelivr.net/gh/beijiuting/leci-vocab@main/version.json", "https://fastly.jsdelivr.net/gh/beijiuting/leci-vocab@main/version.json", "https://raw.githubusercontent.com/beijiuting/leci-vocab/main/version.json", "https://api.github.com/repos/beijiuting/leci-vocab/releases/latest"],
     settings: { currentLib: "cet6", dailyNew: 20, voice: "us", autoSpeak: 1, darkMode: "0", autoFavWrong: 1, learnOrder: "shuffle", freqRange: "all", favBooks: null, curFavBook: "default" },
     libCache: null,      // {id: {id,name,short,color,words,custom}}
     voiceList: [],
@@ -107,7 +107,7 @@
         return;
       }
       var ver = String(info.version).replace(/^v/, "");
-      var urls = [info.mirrorApkUrl, info.apkUrl, "https://github.com/beijiuting/leci-vocab/releases/download/v" + ver + "/乐词背单词-v" + ver + ".apk"]
+      var urls = [info.mirrorApkUrl, "https://fastly.jsdelivr.net/gh/beijiuting/leci-vocab@v" + ver + "/乐词背单词-v" + ver + ".apk", info.apkUrl, "https://github.com/beijiuting/leci-vocab/releases/download/v" + ver + "/乐词背单词-v" + ver + ".apk"]
         .filter(function (x, i, a) { return x && a.indexOf(x) === i; });
       var modal = document.getElementById("modal"), mask = document.getElementById("mask");
       modal.innerHTML = "<h3>正在更新到 v" + esc(ver) + "</h3>" +
