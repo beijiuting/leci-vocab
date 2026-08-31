@@ -24,6 +24,8 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.webkit.WebChromeClient;
+import android.webkit.ValueCallback;
 
 import androidx.webkit.WebViewAssetLoader;
 
@@ -44,6 +46,8 @@ public class MainActivity extends Activity {
     private static final String START_URL = "https://appassets.androidplatform.net/assets/www/index.html";
 
     private WebView webView;
+    private ValueCallback<Uri[]> filePathCallback;
+    private static final int REQ_FILE = 7101;
     private TextToSpeech tts;
     private volatile boolean ttsReady = false;
     private int ttsCounter = 0;
@@ -96,12 +100,48 @@ public class MainActivity extends Activity {
             }
         });
 
+        /* WebView 默认不会替 HTML file input 打开系统选择器，交给 SAF 处理 */
+        webView.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public boolean onShowFileChooser(WebView view, ValueCallback<Uri[]> callback,
+                                              FileChooserParams params) {
+                if (filePathCallback != null) filePathCallback.onReceiveValue(null);
+                filePathCallback = callback;
+                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                intent.setType("text/*");
+                intent.putExtra(Intent.EXTRA_MIME_TYPES, new String[]{
+                        "text/plain", "text/csv", "application/json", "text/comma-separated-values"});
+                try {
+                    startActivityForResult(intent, REQ_FILE);
+                    return true;
+                } catch (Throwable ignored) {
+                    filePathCallback = null;
+                    callback.onReceiveValue(null);
+                    return false;
+                }
+            }
+        });
+
         webView.addJavascriptInterface(new TtsBridge(), "NativeTTS");
         webView.addJavascriptInterface(new BackupBridge(), "NativeBackup");
         initTts();
         requestLegacyRead();   // 卸载重装后读下载目录的自动备份（Android 12 及以下）
 
         webView.loadUrl(START_URL);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode != REQ_FILE || filePathCallback == null) return;
+        Uri[] result = null;
+        if (resultCode == RESULT_OK && data != null) {
+            Uri uri = data.getData();
+            if (uri != null) result = new Uri[]{uri};
+        }
+        filePathCallback.onReceiveValue(result);
+        filePathCallback = null;
     }
 
     private static final int REQ_READ = 7001;
