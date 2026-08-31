@@ -1,3 +1,0 @@
-abandon	放弃
-ability	能力
-hello	你好
