@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">乐词背单词</string>
+    <color name="primary">#4A7DF7</color>
+    <color name="app_bg">#F3F6FB</color>
+    <color name="ic_launcher_background">#4A7DF7</color>
+</resources>

@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" id="meta-theme" content="#4A7DF7">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/i180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="乐词">
+<title>乐词 · 免费背单词</title>
+<link rel="stylesheet" href="css/style.css?v=32">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%234A7DF7'/><text x='50' y='68' font-size='52' text-anchor='middle' fill='white' font-family='serif' font-weight='bold'>词</text></svg>">
+</head>
+<body>
+<div id="app">
+  <main>
+    <!-- 首页 -->
+    <section class="screen" id="page-home">
+      <div class="hero">
+        <button class="sch-fab" id="home-search" title="查单词">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+        </button>
+        <div class="lib-name" id="home-lib">📖 <b>六级词汇</b> ▾</div>
+        <div class="ring-wrap">
+          <div class="ring">
+            <svg width="92" height="92" viewBox="0 0 92 92">
+              <circle cx="46" cy="46" r="40" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="8"/>
+              <circle id="ring-fg" cx="46" cy="46" r="40" fill="none" stroke="#fff" stroke-width="8"
+                      stroke-linecap="round" stroke-dasharray="251.3" stroke-dashoffset="251.3"/>
+            </svg>
+            <div class="ring-txt"><b id="ring-pct">0%</b><span>已学进度</span></div>
+          </div>
+          <div class="stats">
+            <div class="stat"><b id="stat-new">0</b><span>新词</span></div>
+            <div class="stat"><b id="stat-learning">0</b><span>学习中</span></div>
+            <div class="stat"><b id="stat-mastered">0</b><span>已掌握</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card today-card">
+        <div class="row spread">
+          <div class="h2" style="margin:0">今日任务</div>
+          <span class="streak-chip" id="streak-chip">🔥 连续 0 天</span>
+        </div>
+        <div class="task-nums">
+          <div><b id="task-new">0</b><span>新词待学</span></div>
+          <div><b id="task-rev">0</b><span>待复习</span></div>
+          <div><b id="task-done">0</b><span>今日已学</span></div>
+        </div>
+        <button class="btn btn-primary btn-block btn-big" id="btn-start">开始学习</button>
+      </div>
+
+      <div class="quick">
+        <button id="q-review">
+          <span class="qicon" style="background:linear-gradient(135deg,#3BAE7E,#6FD3A8)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><polyline points="21 3 21 9 15 9"/></svg>
+          </span>复习
+        </button>
+        <button id="q-cram">
+          <span class="qicon" style="background:linear-gradient(135deg,#7A5CF0,#A88BFF)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </span>速刷
+        </button>
+        <button id="q-spell">
+          <span class="qicon" style="background:linear-gradient(135deg,#F09A3E,#F7C56A)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+          </span>拼写练习
+        </button>
+        <button id="q-test">
+          <span class="qicon" style="background:linear-gradient(135deg,#4A90D9,#7FB8F0)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/><path d="m9 15 2 2 4-4"/></svg>
+          </span>掌握测试
+        </button>
+        <button id="q-fav">
+          <span class="qicon" style="background:linear-gradient(135deg,#E8615A,#F79A95)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21.2l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.8Z"/></svg>
+          </span>生词本
+        </button>
+      </div>
+    </section>
+
+    <!-- 词库 -->
+    <section class="screen" id="page-libs">
+      <div class="h1">词库</div>
+      <div class="sub" style="margin-bottom:14px">选择要学习的词库，各词库学习进度互相独立</div>
+      <div id="lib-list"></div>
+      <div style="height:14px"></div>
+      <div class="h2">导入自定义词库</div>
+      <div class="import-zone" id="import-zone">
+        <div style="font-size:30px">📥</div>
+        <b style="color:var(--text);font-size:14px">点击选择文件导入</b>
+        <div style="font-size:12px;margin-top:6px;line-height:1.7">支持 TXT / CSV / JSON<br>一行一词：<code>单词,词性,释义</code>（详见「词库导入模板」文件夹）</div>
+      </div>
+      <input type="file" id="import-file" accept=".txt,.csv,.json,.tsv" style="display:none">
+    </section>
+
+    <!-- 仪表盘 -->
+    <section class="screen" id="page-stats">
+      <div class="h1">仪表盘</div>
+      <div class="sub" style="margin:2px 0 14px">正在学习</div>
+      <div class="card dash-lib">
+        <div class="row spread">
+          <div class="row" style="gap:14px">
+            <div class="lib-cover" id="dash-cover">六级</div>
+            <div>
+              <b id="dash-libname" style="font-size:16px">—</b>
+              <div class="sub" style="margin-top:3px">生词本 <span id="dash-favn">0</span> 词</div>
+            </div>
+          </div>
+          <button class="btn btn-ghost" id="dash-changelib" style="padding:8px 14px;font-size:13px">换本词书</button>
+        </div>
+        <div class="dash-progress"><i id="dash-bar" style="width:0%"></i></div>
+        <div class="row spread sub"><span>已学习 <b id="dash-learned" style="color:var(--text)">0</b></span><span>总词数 <b id="dash-total" style="color:var(--text)">0</b></span></div>
+      </div>
+
+      <div class="card">
+        <div class="row spread" style="margin-bottom:12px"><div class="h2" style="margin:0">我的数据 · 概览</div></div>
+        <div class="over-grid">
+          <div><div class="ov-label">🗂 今日学习&复习</div><div class="ov-num"><b id="ov-today">0</b><span>词次</span></div></div>
+          <div><div class="ov-label">📈 累计学习</div><div class="ov-num"><b id="ov-total">0</b><span>词次</span></div></div>
+          <div><div class="ov-label">⏱ 今日总时长</div><div class="ov-num"><b id="ov-todaymin">0</b><span>分钟</span></div></div>
+          <div><div class="ov-label">🕒 累计时长</div><div class="ov-num"><b id="ov-totalmin">0</b><span>分钟</span></div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="row spread" style="margin-bottom:12px">
+          <div class="h2" style="margin:0">日历</div>
+          <span class="streak-chip" id="dash-streak">🔥 连续签到 0 天</span>
+        </div>
+        <div class="week-cal" id="week-cal"></div>
+      </div>
+
+      <div class="card">
+        <div class="row spread" style="margin-bottom:6px">
+          <div class="h2" style="margin:0">每日学习量</div>
+          <div class="seg" id="chart-seg">
+            <button data-n="7" class="on">近7天</button>
+            <button data-n="30">近30天</button>
+          </div>
+        </div>
+        <div class="bar-chart" id="bar-chart"></div>
+      </div>
+      <div class="card">
+        <div class="row spread" style="margin-bottom:12px">
+          <div class="h2" style="margin:0">打卡日历</div>
+          <span class="sub" id="cal-title"></span>
+        </div>
+        <div class="cal" id="cal"></div>
+        <div class="row" style="margin-top:12px;justify-content:center">
+          <button class="btn btn-plain" id="cal-prev" style="padding:7px 16px;font-size:13px">‹ 上月</button>
+          <button class="btn btn-plain" id="cal-next" style="padding:7px 16px;font-size:13px">下月 ›</button>
+        </div>
+      </div>
+      <div class="num-grid">
+        <div class="card"><b id="st-acc">0%</b><span>测验正确率</span></div>
+        <div class="card"><b id="st-days">0</b><span>累计学习天数</span></div>
+      </div>
+    </section>
+
+    <!-- 词表页 -->
+    <section class="screen" id="page-wordlist">
+      <div class="wl-top">
+        <button class="wl-back" id="wl-back">‹</button>
+        <b id="wl-title">词书</b>
+        <span id="wl-head-actions" class="row" style="gap:6px"></span>
+      </div>
+      <div class="wl-filter" id="wl-filter">
+        <button data-f="all" class="on">全部</button>
+        <button data-f="new">未学习</button>
+        <button data-f="learning">复习中</button>
+        <button data-f="mastered">已掌握</button>
+        <button data-f="fav">已标熟</button>
+      </div>
+      <div class="row spread" style="margin-bottom:10px">
+        <span class="sub" id="wl-count" style="font-size:14px;color:var(--text);font-weight:700">0 词</span>
+        <button class="btn btn-plain" id="wl-eye" style="padding:6px 12px;font-size:12.5px">🙈 隐藏释义</button>
+      </div>
+      <div class="card" style="padding:6px 16px" id="wl-list"></div>
+      <div style="text-align:center;padding:14px 0 8px">
+        <button class="btn btn-plain" id="wl-more" style="padding:8px 24px;font-size:13px">加载更多</button>
+      </div>
+      <div class="wl-dock" id="wl-dock">
+        <button data-act="cram"><span class="di">⚡</span><span>速刷</span></button>
+        <button data-act="listen"><span class="di">🎧</span><span>随身听</span></button>
+        <button data-act="spell"><span class="di">✍️</span><span>听写</span></button>
+        <button data-act="export"><span class="di">📤</span><span>导出</span></button>
+      </div>
+    </section>
+
+    <!-- 生词本 -->
+    <section class="screen" id="page-favs">
+      <div class="h1">生词本</div>
+      <div id="fav-books" style="margin:12px 0 4px"></div>
+      <div class="row spread" style="margin:10px 0 14px">
+        <span class="sub" id="fb-hint">收藏新词时会存入当前选中的生词本</span>
+        <button class="btn btn-danger" id="fb-del" style="padding:6px 12px;font-size:12px;display:none">删除本生词本</button>
+      </div>
+      <div class="row" style="margin-bottom:14px;gap:10px">
+        <button class="btn btn-ghost" id="fav-review" style="flex:1">复习生词</button>
+        <button class="btn btn-ghost" id="fav-spell" style="flex:1">听写生词</button>
+      </div>
+      <div class="card" style="padding:6px 0" id="fav-list"></div>
+    </section>
+
+    <!-- 我的 -->
+    <section class="screen" id="page-me">
+      <div class="h1">我的</div>
+      <div class="card" style="margin-top:14px">
+        <div class="set-row">
+          <div class="sl"><b>每日新词数</b><span>每天学习的新单词上限</span></div>
+          <div class="row"><input type="range" id="set-daily" min="5" max="300" step="5" value="20"><b id="set-daily-v" style="color:var(--primary);width:34px;text-align:right">20</b></div>
+        </div>
+        <div class="set-row">
+          <div class="sl"><b>发音口音</b><span>单词朗读使用的口音</span></div>
+          <div class="seg small" id="set-voice">
+            <button data-v="us" class="on">美音</button>
+            <button data-v="uk">英音</button>
+          </div>
+        </div>
+        <div class="set-row">
+          <div class="sl"><b>自动发音</b><span>卡片出现时自动朗读</span></div>
+          <div class="seg small" id="set-auto">
+            <button data-v="1" class="on">开</button>
+            <button data-v="0">关</button>
+          </div>
+        </div>
+        <div class="set-row">
+          <div class="sl"><b>学习顺序</b><span>新词的抽取顺序</span></div>
+          <div class="seg small" id="set-order">
+            <button data-v="shuffle" class="on">乱序</button>
+            <button data-v="book">词书序</button>
+            <button data-v="freq">高频优先</button>
+          </div>
+        </div>
+        <div class="set-row">
+          <div class="sl"><b>学习范围</b><span>按 COCA 词频筛选（5000/8000）</span></div>
+          <div class="seg small" id="set-freq">
+            <button data-v="all" class="on">全部</button>
+            <button data-v="5000">5000</button>
+            <button data-v="8000">8000</button>
+          </div>
+        </div>
+        <div class="set-row">
+          <div class="sl"><b>错词自动收藏</b><span>测验/复习答错的词自动加入生词本</span></div>
+          <div class="seg small" id="set-autofav">
+            <button data-v="1" class="on">开</button>
+            <button data-v="0">关</button>
+          </div>
+        </div>
+        <div class="set-row">
+          <div class="sl"><b>深色模式</b><span>夜间背单词更护眼</span></div>
+          <div class="seg small" id="set-dark">
+            <button data-v="0" class="on">关</button>
+            <button data-v="1">开</button>
+            <button data-v="auto">跟随</button>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="set-row"><div class="sl"><b>导出学习数据</b><span>备份进度 / 生词本 / 统计（JSON）</span></div><button class="btn btn-ghost" id="btn-export" style="padding:8px 16px">导出</button></div>
+        <div class="set-row"><div class="sl"><b>导入备份数据</b><span>粘贴备份内容或选择文件恢复</span></div><button class="btn btn-ghost" id="btn-import" style="padding:8px 16px">导入</button></div>
+        <div class="set-row"><div class="sl"><b>清空全部数据</b><span>删除所有进度与词库，不可恢复</span></div><button class="btn btn-danger" id="btn-wipe" style="padding:8px 16px">清空</button></div>
+        <div class="set-hint">换手机 / 卸载重装前先「导出」备份，装好后「导入」即可恢复；App 更新时直接覆盖安装（不要先卸载），数据不会丢。</div>
+      </div>
+      <div class="card" style="text-align:center;padding:16px">
+        <b style="font-size:15px">乐词 · 免费背单词</b>
+        <div class="sub" style="margin-top:6px;line-height:1.8">完全免费 · 数据全部保存在本地浏览器<br>内置词库数据源自开源词书项目 kajweb/dict<br>（百词斩等主流教材词书，仅作学习交流用途）</div>
+      </div>
+      <input type="file" id="restore-file" accept=".json" style="display:none">
+    </section>
+  </main>
+
+  <!-- 底部导航 -->
+  <nav class="tabbar">
+    <button data-page="home" class="on">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></svg>
+      首页
+    </button>
+    <button data-page="libs">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/></svg>
+      词库
+    </button>
+    <button data-page="stats">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      统计
+    </button>
+    <button data-page="favs">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21.2l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.8Z"/></svg>
+      生词本
+    </button>
+    <button data-page="me">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/></svg>
+      我的
+    </button>
+  </nav>
+
+  <!-- 学习/复习/拼写 全屏层 -->
+  <div class="study" id="study"></div>
+
+  <!-- 查词小卡片 -->
+  <div id="qc-overlay" onclick="App.closeQuerySheet()"></div>
+  <div id="qsheet"></div>
+
+  <!-- 弹窗 -->
+  <div class="mask" id="mask"><div class="modal" id="modal"></div></div>
+  <div id="toast"></div>
+</div>
+
+<script src="data/cet4.js?v=32"></script>
+<script src="data/cet6.js?v=32"></script>
+<script src="data/kaoyan.js?v=32"></script>
+<script src="js/db.js?v=32"></script>
+<script src="js/srs.js?v=32"></script>
+<script src="js/study.js?v=32"></script>
+<script src="js/test.js?v=32"></script>
+<script src="js/app.js?v=32"></script>
+</body>
+</html>

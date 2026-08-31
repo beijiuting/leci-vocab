@@ -1,0 +1,21 @@
+[
+  {
+    "word": "abandon",
+    "us": "əˈbændən",
+    "uk": "əˈbændən",
+    "trans": [
+      { "pos": "v", "tranCn": "放弃；抛弃；遗弃" },
+      { "pos": "n", "tranCn": "放纵；放任" }
+    ],
+    "sentences": [
+      { "en": "How could she abandon her own child?", "cn": "她怎么能抛弃自己的孩子呢？" }
+    ]
+  },
+  {
+    "word": "ability",
+    "trans": [
+      { "pos": "n", "tranCn": "能力；才能" }
+    ]
+  },
+  "honest"
+]

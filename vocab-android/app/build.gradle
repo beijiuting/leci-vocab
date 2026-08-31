@@ -1,0 +1,35 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.leci.vocab'
+    compileSdk 35
+    buildToolsVersion '36.0.0'
+
+    defaultConfig {
+        applicationId 'com.leci.vocab'
+        minSdk 24
+        targetSdk 35
+        versionCode 6
+        versionName '1.7.0'
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            // 个人使用：release 直接用 debug 签名，安装即用
+            signingConfig signingConfigs.debug
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+}
+
+// WebView 壳：仅 androidx.webkit（本地缓存），用于 https 资源映射
+dependencies {
+    implementation 'androidx.webkit:webkit:1.14.0'
+}
