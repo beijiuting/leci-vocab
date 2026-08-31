@@ -5,8 +5,8 @@
   var S = window.SRS, DB = window.DB;
 
   var App = {
-    version: "1.9.1",
-    updateManifestUrls: ["https://raw.githubusercontent.com/beijiuting/leci-vocab/main/version.json", "https://cdn.jsdelivr.net/gh/beijiuting/leci-vocab@main/version.json"],
+    version: "1.9.2",
+    updateManifestUrls: ["https://api.github.com/repos/beijiuting/leci-vocab/releases/latest", "https://raw.githubusercontent.com/beijiuting/leci-vocab/main/version.json", "https://cdn.jsdelivr.net/gh/beijiuting/leci-vocab@main/version.json"],
     settings: { currentLib: "cet6", dailyNew: 20, voice: "us", autoSpeak: 1, darkMode: "0", autoFavWrong: 1, learnOrder: "shuffle", freqRange: "all", favBooks: null, curFavBook: "default" },
     libCache: null,      // {id: {id,name,short,color,words,custom}}
     voiceList: [],
@@ -60,6 +60,11 @@
           try {
             var res = await fetch(this.updateManifestUrls[i] + "?t=" + Date.now(), { cache: "no-store" });
             var candidate = res.ok ? await res.json() : null;
+            if (candidate && candidate.tag_name) {
+              var assets = candidate.assets || [];
+              candidate = { version: candidate.tag_name, notes: [candidate.body || "GitHub 已发布新版本"],
+                apkUrl: assets.length ? assets[0].browser_download_url : candidate.html_url, url: candidate.html_url };
+            }
             if (candidate && candidate.version && (!info || this.compareVersions(candidate.version, info.version) > 0)) info = candidate;
           } catch (ignore) {}
         }

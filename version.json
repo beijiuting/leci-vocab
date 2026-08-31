@@ -1,11 +1,11 @@
 {
-  "version": "1.9.1",
+  "version": "1.9.2",
   "releasedAt": "2026-08-31",
   "url": "https://github.com/beijiuting/leci-vocab",
-  "apkUrl": "https://github.com/beijiuting/leci-vocab/raw/refs/tags/v1.9.1/乐词背单词-v1.9.1.apk",
+  "apkUrl": "https://github.com/beijiuting/leci-vocab/releases/latest",
   "notes": [
-    "修复更新检查被单一缓存源误判为最新版本",
-    "同时读取多个版本源并选择最高版本",
-    "继续支持 GitHub 社区词库下载"
+    "更新检查改用 GitHub Release API",
+    "版本发布后自动生成 Release 并上传 Android APK",
+    "清理仓库内重复的旧 APK 版本"
   ]
 }
